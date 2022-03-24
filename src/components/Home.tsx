@@ -78,6 +78,22 @@ const Home = () => {
     })
   }, [])
 
+  const fetchPreviousMessages = async () => {
+    const response = await fetch('http://localhost:3030/rooms/' + room)
+    const data = await response.json()
+
+    setChatHistory(data.messages)
+  }
+
+  useEffect(() => {
+
+    socket.on('loggedin', fetchPreviousMessages)
+
+    return () => {
+      socket.off('loggedin', fetchPreviousMessages)
+    }
+  }, [room])
+
   const handleUsernameSubmit = (e: FormEvent) => {
     e.preventDefault()
     // we need to send the username to the server
